@@ -5,18 +5,18 @@ import javax.swing.JFrame;
 import java.util.List;
 import java.util.ArrayList;
 
-class RenderEngine {
+class RayTracer {
 
-    final static int WIDTH = 400;
-    final static int HEIGHT = 400;
+    final static int WIDTH = 800;
+    final static int HEIGHT = 600;
 
     public static void main(String[] args) {
 
         List<Surface> surfaces = new ArrayList<>();
-        Camera cam = new Camera(new Vector3D(0, 0, 90), new Vector3D(-1, 0, 0), new Vector3D(0, 0, 1));
+        Camera cam = new Camera(new Vector3D(0, 0, 100), new Vector3D(-1, 0, 0), new Vector3D(0, 0, 1));
 
         RenderPanel panel = new RenderPanel(WIDTH, HEIGHT, surfaces, cam);
-        JFrame frame = new JFrame("Render Engine");
+        JFrame frame = new JFrame("Ray Tracer");
 
         frame.setResizable(false);
         panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -26,25 +26,17 @@ class RenderEngine {
         frame.pack();
         frame.setVisible(true);
 
-        panel.addLight(new Light(1, new Vector3D(300, -200, 200)));
+        panel.addLight(new Light(0.5, new Vector3D(300, -200, 200)));
+        panel.addLight(new Light(0.5, new Vector3D(300, 100, 130)));
 
         Sphere s = new Sphere(new Vector3D(800, 0, 40), 40);
-        s.ambientBGR = new byte[] {100, 100, 100};
-        s.diffuseBGR = new byte[] {100, 100, 100};
-        s.specularBGR = new byte[] {30, 30, 30};
+        s.setRGB(75, 75, 75);
 
         Sphere s1 = new Sphere(new Vector3D(700, -80, 40), 40);
-        s1.ambientBGR = new byte[] {100, 100, 100};
-        s1.diffuseBGR = new byte[] {100, 100, 100};
-        s1.specularBGR = new byte[] {30, 30, 30};
+        s1.setRGB(35, 65, 5);
 
         Plane p = new Plane(0);
-
-        p.ambientBGR = new byte[] {0, 0, 0};
-        p.diffuseBGR = new byte[] {60, 60, 60};
-        p.specularBGR = new byte[] {30, 30, 30};
-
-        p.phong = 0;
+        p.setRGB(35, 35, 35);
 
         surfaces.add(s);
         surfaces.add(s1);

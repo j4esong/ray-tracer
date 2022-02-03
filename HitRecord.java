@@ -1,3 +1,4 @@
+
 class HitRecord {
 
 	public double t;
@@ -7,5 +8,5 @@ class HitRecord {
 	public HitRecord(double t) {
 		this.t = t;
 	}
-	
+
 }

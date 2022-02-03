@@ -1,3 +1,4 @@
+
 class Plane extends Surface {
 
 	public double z = 0;
@@ -5,6 +6,7 @@ class Plane extends Surface {
 	public Plane(double z) {
 		super();
 		this.z = z;
+		this.phong = 0;
 	}
 
 	@Override

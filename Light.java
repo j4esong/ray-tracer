@@ -1,5 +1,6 @@
+
 class Light {
-	
+
 	public double intensity;
 	public Vector3D pos;
 

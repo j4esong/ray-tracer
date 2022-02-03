@@ -1,3 +1,4 @@
+
 class Camera {
 
 	public Vector3D e;
@@ -11,4 +12,5 @@ class Camera {
 		this.v = v;
 		focalLength = 600;
 	}
+
 }

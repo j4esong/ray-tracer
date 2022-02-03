@@ -1,3 +1,4 @@
+
 class Ray {
 
 	Vector3D e;

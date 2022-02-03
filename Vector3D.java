@@ -1,3 +1,4 @@
+
 class Vector3D {
 
 	public double[] values;

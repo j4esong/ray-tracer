@@ -19,6 +19,7 @@ class RenderPanel extends JPanel {
 
 	private int width, height;
 	private BufferedImage canvas;
+	private static final double epsilon = 0.001;
 
 	public RenderPanel(int width, int height, List<Surface> surfaces, Camera cam) {
 		this.width = width;
@@ -53,19 +54,16 @@ class RenderPanel extends JPanel {
 					l = l.normalize();
 					Ray shadowRay = computeRay(firstSurface.p, l);
 					double shadow = 1;
-					for (Surface s : surfaces) {
-						if (s.hit(shadowRay, 0.001, Double.MAX_VALUE, new HitRecord(0)))
+					for (Surface s : surfaces)
+						if (s.hit(shadowRay, epsilon, Double.MAX_VALUE, new HitRecord(0)))
 							shadow = 0;
-					}
 					for (int j = 0; j < 3; j++)
-						temp[j] += first.specularBGR[j] * light.intensity * shadow * Math.pow(Math.max(0, firstSurface.normal.dot(h)), first.phong) +
-						           first.diffuseBGR[j] * light.intensity * shadow * Math.max(0, firstSurface.normal.dot(l)) +
-						           first.ambientBGR[j] * ambientIntensity;
+						temp[j] += signedByteToInt(first.specularBGR[j]) * light.intensity * shadow * Math.pow(Math.max(0, firstSurface.normal.dot(h)), first.phong) +
+						           signedByteToInt(first.diffuseBGR[j]) * light.intensity * shadow * Math.max(0, firstSurface.normal.dot(l)) +
+						           signedByteToInt(first.ambientBGR[j]) * ambientIntensity;
 					for (int j = 0; j < 3; j++)
 						pixels[i * 3 + j] = (byte) Math.min(255, temp[j]);
 				}
-				for (int j = 0; j < 3; j++)
-					pixels[i * 3 + j] = (byte) Math.min(255, pixels[i * 3 + j]);
 			}
 		}
 		repaint();
@@ -75,15 +73,19 @@ class RenderPanel extends JPanel {
 		lights.add(light);
 	}
 
-	private Ray computeRay(Vector3D e, Vector3D s) {
-		return new Ray(e, s);
-	}
-
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(canvas, null, null);
+	}
+
+	private Ray computeRay(Vector3D e, Vector3D s) {
+		return new Ray(e, s);
+	}
+
+	private int signedByteToInt(byte b) {
+		return (((b >> 7) & 1) == 1) ? 256 + b : b;
 	}
 
 }
