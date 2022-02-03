@@ -15,7 +15,7 @@ class RenderPanel extends JPanel {
 	public List<Light> lights;
 	public Camera cam;
 
-	public double ambientIntensity = 0.5;
+	public double ambientIntensity = 0.7;
 
 	private int width, height;
 	private BufferedImage canvas;
@@ -51,9 +51,15 @@ class RenderPanel extends JPanel {
 					Vector3D l = light.pos.subtract(firstSurface.p);
 					Vector3D h = cam.e.subtract(firstSurface.p).add(l).normalize();
 					l = l.normalize();
+					Ray shadowRay = computeRay(firstSurface.p, l);
+					double shadow = 1;
+					for (Surface s : surfaces) {
+						if (s.hit(shadowRay, 0.001, Double.MAX_VALUE, new HitRecord(0)))
+							shadow = 0;
+					}
 					for (int j = 0; j < 3; j++)
-						temp[j] += first.specularBGR[j] * light.intensity * Math.pow(Math.max(0, firstSurface.normal.dot(h)), first.phong) +
-						           first.diffuseBGR[j] * light.intensity * Math.max(0, firstSurface.normal.dot(l)) +
+						temp[j] += first.specularBGR[j] * light.intensity * shadow * Math.pow(Math.max(0, firstSurface.normal.dot(h)), first.phong) +
+						           first.diffuseBGR[j] * light.intensity * shadow * Math.max(0, firstSurface.normal.dot(l)) +
 						           first.ambientBGR[j] * ambientIntensity;
 					for (int j = 0; j < 3; j++)
 						pixels[i * 3 + j] = (byte) Math.min(255, temp[j]);

@@ -13,7 +13,7 @@ class RenderEngine {
     public static void main(String[] args) {
 
         List<Surface> surfaces = new ArrayList<>();
-        Camera cam = new Camera(new Vector3D(0, 0, 60), new Vector3D(-1, 0, 0), new Vector3D(0, 0, 1));
+        Camera cam = new Camera(new Vector3D(0, 0, 90), new Vector3D(-1, 0, 0), new Vector3D(0, 0, 1));
 
         RenderPanel panel = new RenderPanel(WIDTH, HEIGHT, surfaces, cam);
         JFrame frame = new JFrame("Render Engine");
@@ -26,22 +26,28 @@ class RenderEngine {
         frame.pack();
         frame.setVisible(true);
 
-        panel.addLight(new Light(1, new Vector3D(700, -100, 200)));
+        panel.addLight(new Light(1, new Vector3D(300, -200, 200)));
 
         Sphere s = new Sphere(new Vector3D(800, 0, 40), 40);
         s.ambientBGR = new byte[] {100, 100, 100};
         s.diffuseBGR = new byte[] {100, 100, 100};
         s.specularBGR = new byte[] {30, 30, 30};
 
+        Sphere s1 = new Sphere(new Vector3D(700, -80, 40), 40);
+        s1.ambientBGR = new byte[] {100, 100, 100};
+        s1.diffuseBGR = new byte[] {100, 100, 100};
+        s1.specularBGR = new byte[] {30, 30, 30};
+
         Plane p = new Plane(0);
 
         p.ambientBGR = new byte[] {0, 0, 0};
-        p.diffuseBGR = new byte[] {100, 100, 100};
+        p.diffuseBGR = new byte[] {60, 60, 60};
         p.specularBGR = new byte[] {30, 30, 30};
 
         p.phong = 0;
 
         surfaces.add(s);
+        surfaces.add(s1);
         surfaces.add(p);
 
         panel.render();
