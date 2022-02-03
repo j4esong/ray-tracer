@@ -12,4 +12,8 @@ abstract class Surface {
 		phong = 100;
 	}
 
+	public boolean inRange(double t, double t0, double t1) {
+		return t >= t0 && t <= t1;
+	}
+
 }

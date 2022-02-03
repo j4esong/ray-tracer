@@ -35,24 +35,31 @@ class RenderPanel extends JPanel {
 			double u = i % width - width / 2 + 0.5;
 			double v = height / 2 - i / width + 0.5;
 			Ray ray = computeRay(cam.e, cam.w.multiply(-cam.focalLength).add(cam.u.multiply(u)).add(cam.v.multiply(v)));
+			Surface first = null;
+			HitRecord firstSurface = new HitRecord(Double.MAX_VALUE);
 			for (Surface s : surfaces) {
-				HitRecord record = new HitRecord();
-				if (s.hit(ray, 0, Double.MAX_VALUE, record)) {
-					int[] temp = new int[3];
-					for (Light light : lights) {
-						Vector3D l = light.pos.subtract(record.p);
-						Vector3D h = cam.e.subtract(record.p).add(l).normalize();
-						l = l.normalize();
-						for (int j = 0; j < 3; j++)
-							temp[j] += s.specularBGR[j] * light.intensity * Math.pow(Math.max(0, record.normal.dot(h)), s.phong) +
-							           s.diffuseBGR[j] * light.intensity * Math.max(0, record.normal.dot(l)) +
-							           s.ambientBGR[j] * ambientIntensity;
-						for (int j = 0; j < 3; j++)
-							pixels[i * 3 + j] = (byte) Math.min(255, temp[j]);
+				HitRecord record = new HitRecord(0);
+				if (s.hit(ray, 0, Double.MAX_VALUE, record))
+					if (record.t < firstSurface.t) {
+						first = s;
+						firstSurface = record;
 					}
+			}
+			if (firstSurface.t != Double.MAX_VALUE) {
+				int[] temp = new int[3];
+				for (Light light : lights) {
+					Vector3D l = light.pos.subtract(firstSurface.p);
+					Vector3D h = cam.e.subtract(firstSurface.p).add(l).normalize();
+					l = l.normalize();
 					for (int j = 0; j < 3; j++)
-						pixels[i * 3 + j] = (byte) Math.min(255, pixels[i * 3 + j]);
+						temp[j] += first.specularBGR[j] * light.intensity * Math.pow(Math.max(0, firstSurface.normal.dot(h)), first.phong) +
+						           first.diffuseBGR[j] * light.intensity * Math.max(0, firstSurface.normal.dot(l)) +
+						           first.ambientBGR[j] * ambientIntensity;
+					for (int j = 0; j < 3; j++)
+						pixels[i * 3 + j] = (byte) Math.min(255, temp[j]);
 				}
+				for (int j = 0; j < 3; j++)
+					pixels[i * 3 + j] = (byte) Math.min(255, pixels[i * 3 + j]);
 			}
 		}
 		repaint();
